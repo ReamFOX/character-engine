@@ -6,7 +6,11 @@ A lightweight engine for managing D&D-style characters in Java.
 ---
 
 ## Features
-To be implemented
+- Create characters with basic stats (level, health, skills)
+- Level up characters
+- Add skills to characters
+- Simple API for managing multiple characters
+
 ---
 
 ## Getting Started
@@ -26,7 +30,14 @@ mvn clean install
 
 ## Example Usage
 ```java
-To be implemented
+Character hero = new Character("Hero");
+hero.addSkill("Fireball");
+hero.levelUp();
+
+CharacterManager manager = new CharacterManager();
+manager.addCharacter(hero);
+
+System.out.println(manager.getCharacter("Hero").getSkills());
 ```
 
 ---
@@ -40,13 +51,25 @@ mvn test
 
 ## Project Structure
 ```
-To be implemented
+character-engine/
+ ├── src/main/java/com/example/character/
+ │    ├── Character.java
+ │    └── CharacterManager.java
+ ├── src/test/java/com/example/character/
+ │    └── CharacterTest.java
+ │    └── CharacterManagerTest.java
+ ├── pom.xml
+ ├── README.txt
+ └── LICENSE
 ```
 
 ---
 
 ## Future Plans
-To be implemented
+- Inventory system for characters
+- Save/load characters to a database
+- Telegram bot integration
+- More advanced stats and abilities
 
 ---
 
