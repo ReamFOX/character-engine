@@ -1,5 +1,6 @@
 package ua.reamfox;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -18,7 +19,7 @@ public class Character {
     this.name = name;
     this.lvl = 1;
     this.health = 100;
-    this.skills = skills;
+    this.skills = new ArrayList<>(skills);
   }
 
   public void lvlUp() {
