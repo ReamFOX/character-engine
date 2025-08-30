@@ -19,12 +19,18 @@ class CharacterManagerTest {
   private CharacterManager manager;
   private Character hero;
   private Character mage;
+  private Skill swordMastery;
+  private Skill fireball;
+  private Skill teleport;
 
   @BeforeEach
   void setUp() {
+    swordMastery = new Skill("Sword Mastery", 1, 10);
+    fireball = new Skill("Fireball", 1, 10);
+    teleport = new Skill("Teleport", 1, 0);
     manager = new CharacterManager();
-    hero = new Character("Hero", Set.of("Sword Mastery"));
-    mage = new Character("Mage", Set.of("Fireball", "Teleport"));
+    hero = new Character("Hero", Set.of(swordMastery));
+    mage = new Character("Mage", Set.of(fireball, teleport));
   }
 
   @Test
@@ -36,7 +42,7 @@ class CharacterManagerTest {
   @Test
   void addCharacter_shouldReturnExistingCharacterWhenDuplicate() {
     manager.addCharacter(hero);
-    Character duplicateHero = new Character("Hero", Set.of("Shield"));
+    Character duplicateHero = new Character("Hero", Set.of(new Skill("Shield bash", 1, 10)));
 
     Character result = manager.addCharacter(duplicateHero);
 
@@ -80,8 +86,10 @@ class CharacterManagerTest {
     Map<String, Character> characters = manager.getAllCharacters();
     Character existingCharacter = hero; // Use an existing character that we know is valid
 
-    assertThrows(UnsupportedOperationException.class, 
-        () -> characters.put("Test", existingCharacter));
+    assertThrows(
+        UnsupportedOperationException.class,
+        () -> characters.put("Test", existingCharacter)
+    );
   }
 
   @Test
@@ -108,25 +116,26 @@ class CharacterManagerTest {
   }
 
   @Test
-  void concurrentAccess_shouldBeThreadSafe() throws InterruptedException {
+  void concurrentAccess_shouldBeThreadSafe() {
     int threadCount = 10;
     try (ExecutorService service = Executors.newFixedThreadPool(threadCount)) {
       CountDownLatch latch = new CountDownLatch(1);
 
-    for (int i = 0; i < threadCount; i++) {
-      final String name = "Character" + i;
-      service.execute(() -> {
-        try {
-          latch.await();
-          Character character = new Character(name, Set.of("Skill" + name));
-          manager.addCharacter(character);
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      });
-    }
+      for (int i = 0; i < threadCount; i++) {
+        final String name = "Character" + i;
+        service.execute(() -> {
+          try {
+            latch.await();
+            Skill skill = new Skill("Skill" + name, 1, 10);
+            Character character = new Character(name, Set.of(skill));
+            manager.addCharacter(character);
+          } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+          }
+        });
+      }
 
-    latch.countDown();
+      latch.countDown();
     }
     assertEquals(threadCount, manager.getCharacterCount());
   }

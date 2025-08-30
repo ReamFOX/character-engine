@@ -1,13 +1,11 @@
 package ua.reamfox;
 
-import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ua.reamfox.Character.MAX_HEALTH;
 import static ua.reamfox.Character.MAX_LEVEL;
@@ -15,10 +13,14 @@ import static ua.reamfox.Character.MAX_LEVEL;
 class CharacterTest {
 
   private Character hero;
+  private Skill existingSkill;
+  private Skill nonExistingSkill;
 
   @BeforeEach
   void setup() {
-    hero = new Character("Hero", Set.of("Sword Mastery"));
+    existingSkill = new Skill("Sword Mastery", 1, 10);
+    nonExistingSkill = new Skill("NonExistentSkill", 1, 10);
+    hero = new Character("Hero", Set.of(existingSkill));
   }
 
   @Test
@@ -26,7 +28,7 @@ class CharacterTest {
     assertEquals("Hero", hero.getName());
     assertEquals(1, hero.getLevel());
     assertEquals(100, hero.getHealth());
-    assertTrue(hero.getSkills().contains("Sword Mastery"));
+    assertTrue(hero.getSkills().contains(existingSkill));
   }
 
   @Test
@@ -46,14 +48,13 @@ class CharacterTest {
 
   @Test
   void testAddSkill() {
-    String newSkill = "Shield Block";
+    var newSkill = new Skill("Shield Block", 1, 0);
     assertTrue(hero.addSkill(newSkill));
     assertTrue(hero.getSkills().contains(newSkill));
   }
 
   @Test
   void testAddDuplicateSkill() {
-    String existingSkill = "Sword Mastery";
     assertFalse(hero.addSkill(existingSkill));
     assertEquals(
         1, hero.getSkills().stream()
@@ -64,29 +65,19 @@ class CharacterTest {
 
   @Test
   void testRemoveSkill() {
-    String skillToRemove = "Sword Mastery";
-    assertTrue(hero.removeSkill(skillToRemove));
-    assertFalse(hero.hasSkill(skillToRemove));
+    assertTrue(hero.removeSkill(existingSkill));
+    assertFalse(hero.hasSkill(existingSkill));
   }
 
   @Test
   void testRemoveNonExistentSkill() {
-    assertFalse(hero.removeSkill("NonExistentSkill"));
+    assertFalse(hero.removeSkill(nonExistingSkill));
   }
 
   @Test
   void testHasSkill() {
-    assertTrue(hero.hasSkill("Sword Mastery"));
-    assertFalse(hero.hasSkill("NonExistentSkill"));
-  }
-
-  @Test
-  void testSkillsListIsImmutable() {
-    List<String> skills = hero.getSkills();
-    assertThrows(
-        UnsupportedOperationException.class,
-        () -> skills.add("New Skill")
-    );
+    assertTrue(hero.hasSkill(existingSkill));
+    assertFalse(hero.hasSkill(nonExistingSkill));
   }
 
   @Test

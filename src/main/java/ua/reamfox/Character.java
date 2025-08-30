@@ -19,17 +19,17 @@ public class Character {
   private static final int HEALTH_INCREASE_PER_LEVEL = 10;
 
   private final String name;
+  private final Set<Skill> skills;
   private int level;
   private int health;
-  private final Set<String> skills;
 
   /**
    * Creates a new character with the specified name and skills.
    *
    * @param name   the name of the character
-   * @param skills initial list of skills
+   * @param skills initial set of skills
    */
-  public Character(String name, Set<String> skills) {
+  public Character(String name, Set<Skill> skills) {
     this.name = name;
     this.level = 1;
     this.health = INITIAL_HEALTH;
@@ -56,17 +56,17 @@ public class Character {
    * @param skill the skill to add
    * @return true if the skill was added, false if it was already present
    */
-  public boolean addSkill(String skill) {
+  public boolean addSkill(Skill skill) {
     return skills.add(skill);
   }
 
   /**
    * Removes a skill from the character's skill set.
    *
-   * @param skill the skill to remove (case-sensitive)
+   * @param skill the skill to remove
    * @return true if the skill was removed, false if it wasn't found
    */
-  public boolean removeSkill(String skill) {
+  public boolean removeSkill(Skill skill) {
     return skills.remove(skill);
   }
 
@@ -76,11 +76,16 @@ public class Character {
    * @param skill the skill to check for
    * @return true if the character has the skill, false otherwise
    */
-  public boolean hasSkill(String skill) {
+  public boolean hasSkill(Skill skill) {
     return skills.contains(skill);
   }
 
-  public List<String> getSkills() {
+  /**
+   * Returns an immutable list of the character's skills.
+   *
+   * @return an immutable list of skills
+   */
+  public List<Skill> getSkills() {
     return List.copyOf(skills);
   }
 }
